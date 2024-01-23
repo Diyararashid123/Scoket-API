@@ -29,9 +29,9 @@ def write_last_fetched_data(date, letters):
 
 # Function to write the fetched orders to a file
 def write_orders_to_file(orders):
-    with open('orders_data.txt', 'a') as file:  # 'a' opens the file in append mode
+    with open('orders_data.txt', 'a') as file:
         for order in orders:
-            file.write(f"{order}\n")  # You might want to customize how each order is written to the file
+            file.write(f"{order}\n") 
 
 load_dotenv()
 supabase_url = os.environ.get('SUPABASE_URL')

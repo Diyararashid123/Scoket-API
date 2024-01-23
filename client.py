@@ -4,7 +4,7 @@ import time
 # Server configuration
 server_ip = '127.0.0.1'
 server_port = 64321
-heartbeat_interval = 5  # seconds
+heartbeat_interval = 5 
 
 def read_next_order():
     try:
@@ -12,10 +12,10 @@ def read_next_order():
             orders = file.readlines()
             if orders:
                 last_order = orders[-1].strip()
-                # Assuming the format is "OrderID:LetterData"
+              
                 parts = last_order.split(':')
                 if len(parts) >= 2:
-                    return parts[1]  # Return only the letter part
+                    return parts[1] 
                 else:
                     print("Error: Order format is incorrect")
                     return None
@@ -44,16 +44,16 @@ def connect_to_server():
         return None
 
 def main():
-    client_socket = connect_to_server()  # Attempt to connect to server initially
+    client_socket = connect_to_server()  
     last_heartbeat_time = 0
-    current_order = read_next_order()  # Initialize with the first order
+    current_order = read_next_order()
 
     while True:
         if not client_socket:
             print("Attempting to reconnect to server...")
             client_socket = connect_to_server()
             if not client_socket:
-                time.sleep(1)  # Wait a bit before retrying if unable to connect
+                time.sleep(1) 
                 continue
 
         if time.time() - last_heartbeat_time >= heartbeat_interval:
@@ -63,7 +63,7 @@ def main():
             except socket.error:
                 print("Failed to send heartbeat.")
                 client_socket.close()
-                client_socket = None  # Mark as not connected
+                client_socket = None 
                 continue
 
         if current_order:
@@ -72,7 +72,7 @@ def main():
             except socket.error:
                 print("Failed to send data.")
                 client_socket.close()
-                client_socket = None  # Mark as not connected
+                client_socket = None 
                 continue
 
         try:
@@ -80,14 +80,14 @@ def main():
             response = client_socket.recv(1024).decode()
             if response == 'order done':
                 print(f"Server acknowledged {current_order}. Sending next order.")
-                delete_last_order()  # Delete the last order
-                current_order = read_next_order()  # Read the next order and prepare to send it
+                delete_last_order() 
+                current_order = read_next_order()  
         except socket.timeout:
             pass  # It's okay if there's no response within timeout
         except socket.error:
             print("Error receiving data.")
             client_socket.close()
-            client_socket = None  # Mark as not connected
+            client_socket = None 
 
         time.sleep(1)  # Main loop pause
 
